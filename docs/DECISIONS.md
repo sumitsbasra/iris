@@ -98,7 +98,19 @@ A running log of architectural and product decisions, with reasoning. Update thi
 
 ---
 
-### No SMS fallback — Mac companion required for messaging
+### iOS-first build sequencing
+**Decision:** Start with iOS app only. Add Mac companion and shared Swift packages in later phases.
+
+**Reasoning:** Mac companion has meaningfully different architecture (always-on, schedulers, SQLite watching, Anthropic API calls). Building both simultaneously creates decisions before the data model is settled. Extracting shared packages before the schema is stable means refactoring in two places at once.
+
+**Phases:**
+1. iOS app — onboarding, CloudKit, HealthKit, EventKit, dashboard, memory
+2. Extract IrisCore + IrisAI into shared Swift packages (once schema stable)
+3. Add macOS target — IrisGateway, AI orchestration, scheduler
+
+---
+
+
 **Decision:** Removed Twilio SMS fallback. Mac companion is required for Iris to send messages.
 
 **Reasoning:** Keeping the architecture simple. Twilio adds cost, complexity, and a third-party dependency. The target user has a Mac. If the Mac is off, messages queue in CloudKit and deliver when it comes back online. This is acceptable behaviour.

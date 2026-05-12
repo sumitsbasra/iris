@@ -6,7 +6,30 @@ Iris is a personal AI assistant for iPhone that proactively surfaces what matter
 
 The Mac companion app runs locally to enable true iMessage delivery via the Messages.app gateway.
 
-## Monorepo structure
+## Build sequencing — read this first
+
+Iris is built in three phases. Do not jump ahead.
+
+**Phase 1 (current): iOS app only**
+The Xcode project is a single iOS app target. No Mac target yet. No shared Swift packages yet. Get the iOS app working: onboarding, CloudKit schema, HealthKit, EventKit, permissions, dashboard, memory viewer.
+
+**Phase 2: Extract shared packages**
+Once the CloudKit schema is stable, extract `IrisCore` (models) and `IrisAI` (Anthropic client) into Swift packages. Do this only when the iOS data model is settled — not before.
+
+**Phase 3: Add Mac companion target**
+Add the macOS target to the Xcode project. It reads from the same CloudKit container. At this point the Mac target gets `IrisGateway` (osascript, SQLite watching) and the AI orchestration layer.
+
+**If Claude Code tries to scaffold Mac targets or shared packages before being explicitly asked: stop and check with the user.**
+
+## Monorepo structure (current state — Phase 1)
+
+```
+/iris-ios          iOS app (SwiftUI, iOS 26+) ← build this first
+/docs              Architecture, product, decisions
+CLAUDE.md          This file
+```
+
+## Monorepo structure (target state — Phase 3)
 
 ```
 /iris-ios          iOS app (SwiftUI, iOS 26+)
